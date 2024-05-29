@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        textarea#display {
+            width: 50%;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <textarea id="display"></textarea>
+    </div>
+    <button type="button" id="send">發送</button>
+    <script>
+
+        function sse() {
+            const eventSource = new EventSource('https://localhost:44367/chat.ashx?prompt=aaa');
+            const privateAreaChar = 'close';
+            let messageBox = document.querySelector('#display');
+            eventSource.onmessage = (event) => {
+                if (event.data.trim() !== privateAreaChar) {
+                    const newData = event.data;
+                    console.log(newData);
+                    let oldData = messageBox.value;
+                    messageBox.value = oldData.concat(newData);
+                } else {
+                    eventSource.close();
+                }
+            };
+        }
+        document.querySelector('#send').addEventListener('click', sse);
+    </script>
+</body>
+</html>
